@@ -6,7 +6,7 @@
  * @copyright  2014-2015 Amy Stephen. All rights reserved.
  * @license    http://www.opensource.org/licenses/mit-license.html MIT License
  */
-namespace CommonApi\Query;
+namespace CommonApi\Fieldhandler;
 
 use Exception;
 use CommonApi\Exception\InvalidArgumentException;
@@ -100,9 +100,11 @@ trait FieldhandlerUsageTrait
             $this->editFieldhandlerAttribute($key);
         }
 
-        $this->executeConstraint($options);
+        $fieldhandler_results = $this->executeConstraint($options);
 
-        return $this;
+        $this->processConstraintResults($fieldhandler_results);
+
+        return $this->field_value;
     }
 
     /**
@@ -137,11 +139,18 @@ trait FieldhandlerUsageTrait
      */
     protected function editFieldhandlerAttribute($attribute)
     {
-        $this->$attribute = null;
+        $field_name = 'field_' . $attribute;
+
+        $this->$field_name = null;
 
         if (isset($this->field[$attribute])) {
-            $this->$attribute = $this->field[$attribute];
+            $this->$field_name = $this->field[$attribute];
 
+            return $this;
+        }
+
+        if ($attribute === 'value') {
+            $this->$field_name = null;
             return $this;
         }
 
@@ -164,8 +173,9 @@ trait FieldhandlerUsageTrait
     protected function executeConstraint(array $options = array())
     {
         try {
+            $method = $this->method;
 
-            $fieldhandler_results = $this->fieldhandler->$this->method(
+            return $this->fieldhandler->$method(
                 $this->field_name,
                 $this->field_value,
                 ucfirst(strtolower($this->field_type)),
@@ -182,7 +192,19 @@ trait FieldhandlerUsageTrait
                 . $e->getMessage()
             );
         }
+    }
 
+    /**
+     * Process Fieldhandler Results
+     *
+     * @param   object  $fieldhandler_results
+     *
+     * @return  $this
+     * @since   1.0.0
+     * @throws  \CommonApi\Exception\RuntimeException
+     */
+    protected function processConstraintResults($fieldhandler_results)
+    {
         $this->field_value = $fieldhandler_results->getFieldValue();
 
         return $this;
