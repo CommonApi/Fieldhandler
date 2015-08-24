@@ -1,0 +1,29 @@
+{
+    "name": "commonapi/fieldhandler",
+    "description": "Common Fieldhandler Api Interface",
+    "keywords": ["api", "CommonApi", "fieldhandler"],
+    "homepage": "https://github.com/CommonApi/Fieldhandler",
+    "type": "api",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "AmyStephen",
+            "filesystem": "AmyStephen@Molajo.org",
+            "homepage": "http://Molajo.org"
+        }
+    ],
+    "require": {
+        "commonapi/exception": ">=0.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "CommonApi\\Fieldhandler\\": ""
+        }
+    },
+
+    "archive": {
+        "exclude": ["/.dev"]
+    },
+
+    "minimum-stability": "dev"
+}
